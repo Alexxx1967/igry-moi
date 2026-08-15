@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Систематика: воскресший гербарий (тайна Иерихона)</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:'Segoe UI',Tahoma,Verdana,sans-serif;
+  background:linear-gradient(160deg,#008080 0%,#2aa06a 45%,#9acd32 100%);
+  background-attachment:fixed;color:#22301c;padding:12px;
+}
+#app{max-width:980px;margin:0 auto}
+.screen{display:none}
+.screen.active{display:block;animation:fadeIn .45s ease}
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.card{
+  background:#fbf6e7;border-radius:18px;box-shadow:0 10px 30px rgba(0,40,30,.35);
+  padding:20px;position:relative;margin-bottom:16px;
+}
+h1{font-size:clamp(1.3rem,4.5vw,2.1rem);color:#123f33;text-align:center;margin-bottom:6px}
+h2{font-size:clamp(1.1rem,3.6vw,1.5rem);color:#123f33;margin-bottom:10px}
+.subtitle{text-align:center;color:#3c6b34;margin-bottom:16px;font-style:italic}
+.hidden{display:none!important}
+.btn{
+  display:inline-block;background:#2c7a2c;color:#fff;border:none;border-radius:12px;
+  padding:12px 18px;font-size:1rem;font-weight:600;cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,40,20,.3);transition:transform .12s, background .2s;
+}
+.btn:hover:not(:disabled){background:#246824;transform:translateY(-1px)}
+.btn:disabled{opacity:.55;cursor:not-allowed}
+.btn-small{padding:8px 12px;font-size:.9rem}
+.btn-ghost{background:#5b7a52}
+.btn-ghost:hover:not(:disabled){background:#4a6743}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+@media(max-width:560px){.tiles{grid-template-columns:1fr}}
+.tile{
+  background:#fffdf4;border:2px solid #7ba06a;border-radius:14px;padding:16px;
+  font-size:1rem;font-weight:700;color:#1d4d25;cursor:pointer;text-align:center;
+  box-shadow:0 4px 12px rgba(0,40,20,.2);transition:transform .15s;
+}
+.tile:hover:not(.locked){transform:translateY(-2px);background:#f2ffe9}
+.tile.locked{opacity:.55;cursor:not-allowed}
+.tile small{display:block;font-weight:400;color:#5a7a52;margin-top:6px}
+.tile.wide{grid-column:1/-1;background:#f4fbff;border-color:#4a8aa8;color:#17475e}
+.name-row{margin:14px 0 4px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+.name-row label{font-weight:600;color:#123f33}
+.name-row input{
+  padding:10px 12px;border-radius:10px;border:2px solid #7ba06a;font-size:1rem;min-width:200px;background:#fff;
+}
+.timer{
+  font-family:'Courier New',monospace;font-weight:700;font-size:clamp(1.2rem,4vw,1.7rem);
+  background:#123f33;color:#baf7c8;padding:8px 14px;border-radius:12px;letter-spacing:2px;white-space:nowrap;
+}
+#screen-story .card{position:relative}
+.story-timer-wrap{position:absolute;top:14px;right:14px}
+.story-text{font-size:1.02rem;line-height:1.55;margin:10px 0 14px}
+.idcard{background:#fff;color:#111;border:2px solid #333;border-radius:10px;padding:10px;margin-top:10px}
+.idcard h3{font-size:.95rem;margin-bottom:6px;color:#111}
+.taxon-row{
+  display:flex;gap:8px;align-items:center;border:1px solid #999;border-radius:8px;
+  padding:6px 8px;margin:5px 0;font-size:.92rem;background:#fafafa;flex-wrap:wrap;
+}
+.taxon-row.filled{background:#d9f2d9;border-color:#2c7a2c}
+.taxon-rank{font-weight:700;min-width:96px}
+.taxon-val i{color:#444;font-size:.85em}
+.taxon-val.empty{color:#888;letter-spacing:2px}
+#screen-question{perspective:1400px}
+#q-page{transform-style:preserve-3d;backface-visibility:hidden}
+.flip-out{animation:flipOut .38s ease-in forwards}
+.flip-in{animation:flipIn .38s ease-out}
+@keyframes flipOut{from{transform:rotateY(0);opacity:1}to{transform:rotateY(-80deg);opacity:0}}
+@keyframes flipIn{from{transform:rotateY(80deg);opacity:0}to{transform:rotateY(0);opacity:1}}
+.q-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;margin-bottom:12px;flex-wrap:wrap}
+#q-num{font-weight:800;color:#123f33;font-size:1.05rem}
+#q-tax{color:#5a4632;font-weight:600;font-size:.95rem;margin-top:2px}
+#q-text{font-size:1.05rem;line-height:1.5;margin:10px 0;font-weight:600;color:#28361f}
+.img-wrap{display:flex;flex-direction:column;align-items:center;gap:10px;margin:10px 0}
+.img-wrap img{max-width:100%;max-height:46vh;border-radius:10px;border:2px solid #b9a06a;background:#fff}
+.spinner{
+  width:46px;height:46px;border:6px solid #cde6c4;border-top-color:#2c7a2c;border-radius:50%;
+  animation:spin 1s linear infinite;margin:20px auto;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+.opts{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:12px 0}
+.opt{
+  padding:12px 0;font-size:1.05rem;font-weight:700;border-radius:10px;border:2px solid #7ba06a;
+  background:#fffdf4;color:#1d4d25;cursor:pointer;transition:background .15s;
+}
+.opt:hover:not(:disabled){background:#eaf7dd}
+.opt:disabled{cursor:default;opacity:.85}
+.opt.sel{outline:3px solid #2c7a2c;background:#eaf7dd}
+.opt.good{background:#c9f2c9;border-color:#2c8a2c;color:#14532d}
+.opt.bad{background:#f6cfc7;border-color:#c65340;color:#7a2417}
+.m-row{
+  display:grid;grid-template-columns:30px 1fr 82px;gap:8px;align-items:center;
+  margin:7px 0;padding:8px;border-radius:10px;background:#fffdf4;border:1px solid #d8cba8;
+}
+.m-row.good{background:#e2f6e2;border-color:#2c8a2c}
+.m-row.bad{background:#fde8e4;border-color:#c65340}
+.m-letter{font-weight:800;color:#123f33;text-align:center}
+.m-text{font-size:.95rem;line-height:1.35}
+.m-row select,.seq-row select{
+  padding:9px 6px;font-size:1rem;border-radius:8px;border:2px solid #7ba06a;background:#fff;width:100%;
+}
+select.good{border-color:#2c8a2c;background:#e2f6e2}
+select.bad{border-color:#c65340;background:#fde8e4}
+@media(max-width:420px){.m-row{grid-template-columns:24px 1fr 64px}.m-text{font-size:.85rem}}
+.multi label{
+  display:flex;gap:10px;align-items:flex-start;padding:10px;margin:7px 0;border-radius:10px;
+  background:#fffdf4;border:1px solid #d8cba8;cursor:pointer;font-size:.98rem;line-height:1.4;
+}
+.multi input{transform:scale(1.3);margin-top:2px;accent-color:#2c7a2c}
+.multi label.good{background:#e2f6e2;border-color:#2c8a2c}
+.multi label.bad{background:#fde8e4;border-color:#c65340}
+.multi label.miss{background:#e2f6e2;border:2px dashed #2c8a2c}
+.warn{
+  margin:10px 0;padding:10px 12px;border-radius:10px;background:#fff3cd;border:2px solid #d1a83c;
+  color:#6b4d0e;font-weight:600;font-size:.95rem;
+}
+.feedback{
+  margin-top:14px;padding:14px;border-radius:12px;display:flex;flex-direction:column;gap:10px;align-items:flex-start;
+}
+.feedback.ok{background:#dff5df;border:2px solid #3f9d42}
+.feedback.bad{background:#fde0dc;border:2px solid #c65340}
+.reveal{background:#fffdf4;border:1px dashed #7a6a3a;border-radius:8px;padding:8px 10px;font-size:.95rem}
+@keyframes flashBg{0%{background:#fbf6e7}30%{background:#c9f7c9}100%{background:#fbf6e7}}
+.card.flash{animation:flashBg .8s ease}
+.manuscript{
+  font-family:Georgia,'Times New Roman',serif;background:#f1dfb6;color:#4a3416;
+  padding:28px 24px;margin:16px 0;position:relative;line-height:1.6;font-size:1.02rem;
+  border-radius:6px 14px 8px 12px;
+  box-shadow:inset 0 0 60px rgba(96,56,12,.5), 0 8px 24px rgba(0,0,0,.35);
+}
+.manuscript::after{
+  content:'';position:absolute;inset:0;pointer-events:none;border-radius:inherit;
+  background:radial-gradient(ellipse at center, transparent 55%, rgba(70,40,10,.28) 85%, rgba(35,18,4,.75) 100%);
+}
+.manuscript h3{text-align:center;margin-bottom:10px;font-size:1.25rem;color:#3a2408}
+.manuscript p{margin-bottom:10px;text-indent:24px}
+.manuscript .motto{text-align:center;font-style:italic;font-weight:700;text-indent:0;margin-top:14px;color:#6b3d10}
+.final-fig{margin:14px auto;text-align:center}
+.final-fig img{max-width:100%;border-radius:12px;border:2px solid #b9a06a;background:#fff}
+.final-fig figcaption{font-size:.9rem;color:#5a4632;font-style:italic;margin-top:6px}
+#res-canvas{display:block;margin:8px auto;max-width:100%;background:linear-gradient(#eaf7ff,#d2ecf7);border-radius:12px;border:2px solid #9cc4d8}
+.res-cap{text-align:center;font-size:.9rem;color:#3c6b34;font-style:italic;margin-bottom:10px}
+.row-btns{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px}
+#final-result h3{color:#123f33;margin-bottom:6px}
+.modal{position:fixed;inset:0;background:rgba(10,30,25,.65);display:none;align-items:center;justify-content:center;z-index:70;padding:16px}
+.modal.open{display:flex}
+.modal-card{background:#fbf6e7;border-radius:16px;max-width:680px;width:100%;max-height:84vh;overflow:auto;padding:18px;box-shadow:0 20px 50px rgba(0,0,0,.5)}
+.modal-card h2{margin-bottom:12px}
+table.stat{width:100%;border-collapse:collapse;font-size:.9rem;background:#fff}
+table.stat th,table.stat td{border:1px solid #b9a97a;padding:7px 8px;text-align:left}
+table.stat th{background:#e8f0da}
+.modal-close{margin-top:14px}
+.img-row{display:grid;grid-template-columns:1fr auto auto;gap:8px;align-items:center;margin:8px 0;background:#fffdf4;border:1px solid #d8cba8;border-radius:10px;padding:8px 10px}
+.img-row .lbl{font-size:.92rem;line-height:1.35}
+.img-row .lbl b{color:#123f33}
+.img-row .st{font-size:.82rem;color:#5a7a52;grid-column:1/-1}
+.img-row input[type=file]{font-size:.85rem;max-width:100%}
+@media(max-width:520px){.img-row{grid-template-columns:1fr auto}.img-row input[type=file]{grid-column:1/-1}}
+.hint{font-size:.85rem;color:#5a7a52;margin-top:10px;line-height:1.45}
+#fx{position:fixed;inset:0;pointer-events:none;z-index:60}
+footer{text-align:center;color:#e8ffe0;font-size:.85rem;padding:10px 0 20px;text-shadow:0 1px 2px rgba(0,60,30,.4)}
+</style>
+</head>
+<body>
+<canvas id="fx"></canvas>
+<div id="app">
+
+  <!-- ЭКРАН 1: СТАРТОВЫЙ -->
+  <section id="screen-start" class="screen active">
+    <div class="card">
+      <h1>🌿 Систематика: воскресший гербарий</h1>
+      <div class="subtitle">тайна Иерихона · Подготовка к ЕГЭ по биологии</div>
+      <div class="name-row">
+        <label for="name-input">Имя игрока:</label>
+        <input id="name-input" type="text" maxlength="30" placeholder="Введите имя">
+      </div>
+      <div class="tiles">
+        <button class="tile" id="btn-training">🎮 Игровой уровень (тренировочный)<small>квест из 6 заданий с определительной карточкой</small></button>
+        <button class="tile" id="btn-control">📝 Контрольный уровень<small id="ctrl-note">откроется после прохождения игрового уровня</small></button>
+        <button class="tile" id="btn-stats">📊 Статистика игрока<small>история ваших попыток</small></button>
+        <button class="tile" id="btn-rating">🏆 Общий рейтинг<small>результаты всех игроков на этом устройстве</small></button>
+        <button class="tile wide" id="btn-imgs">🖼 Рисунки к заданиям<small>загрузите рисунки с устройства — они будут работать без интернета</small></button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 2: СЮЖЕТНЫЙ -->
+  <section id="screen-story" class="screen">
+    <div class="card">
+      <div class="story-timer-wrap"><span class="timer" id="story-timer">00:00</span></div>
+      <h2>📜 Задание от профессора</h2>
+      <div class="story-text">
+        Вы — молодой ботаник‑стажёр. Профессор передаёт вам загадочный гербарный образец — высохший, колючий шарик,
+        найденный в древнем манускрипте. В записях сказано, что это растение «умирает и воскресает», его почитали
+        в разных культурах, но точное научное название утеряно.<br><br>
+        Ваша задача — восстановить систематическое положение растения, пройдя цепочку из 6 уровней.
+        За каждый правильный ответ в определительной карточке будет заполнен один таксон — от отдела до вида.
+        Когда карточка заполнится полностью, вы узнаете легенду о растении и получите сертификат.
+      </div>
+      <div class="idcard" id="story-card"></div>
+      <div class="row-btns">
+        <button class="btn" id="btn-start">Начать игру ▶</button>
+        <button class="btn btn-ghost" id="btn-story-home">На главную</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЭКРАНЫ 3–8: ВОПРОСЫ -->
+  <section id="screen-question" class="screen">
+    <div class="card" id="q-page">
+      <div class="q-head">
+        <div><div id="q-num"></div><div id="q-tax"></div></div>
+        <span class="timer" id="q-timer">00:00</span>
+      </div>
+      <div class="img-wrap hidden" id="img-wrap"></div>
+      <div id="q-text"></div>
+      <div id="controls"></div>
+      <div class="warn hidden" id="warn"></div>
+      <button class="btn" id="btn-check">Проверить</button>
+      <div class="feedback hidden" id="feedback"></div>
+      <div class="idcard hidden" id="idcard-wrap">
+        <h3>🗂 Определительная карточка</h3>
+        <div id="idcard"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ЭКРАН 9: ФИНАЛ -->
+  <section id="screen-final" class="screen">
+    <div class="card">
+      <h2>🏺 Тайна Иерихона</h2>
+      <div class="manuscript">
+        <h3>✦ Легенда о воскресшей розе Иерихона ✦</h3>
+        <p>В землях, где пески встречают камень, близ древнего Иерихона, растёт трава, что не боится смерти.
+        Когда засуха приходит, она сворачивает ветви свои в колючий шар, и ветер гонит его по пустыне, как прах.</p>
+        <p>Но стоит шару коснуться воды — раскрываются ветви, будто руки, воздетые к небу, возвращается к ним зелень,
+        и растение воскресает на глазах изумлённых путников.</p>
+        <p>Люди пустыни почитали его как знак победы жизни над смертью: клали в колыбели новорождённым, хранили под
+        кровлей дома, дарили путникам. Старцы говаривали: «Как роза Иерихона восстаёт из праха, так и всякая жизнь возвратится».</p>
+        <p>В монастырских книгах её называли <i>rosa hierochuntina</i> — роза воскресения. А науке имя её подарил
+        Карл Линней: <i>Anastatica</i> — от греческого «anastasis», то есть «воскресение».</p>
+        <div class="motto">Ex siccitate vita — «Из сухости — жизнь»</div>
+      </div>
+      <figure class="final-fig hidden" id="final-fig">
+        <img id="final-photo" alt="Иерихонская роза: высохший шар и раскрывшееся растение">
+        <figcaption>Рис. 5. «Иерихонская роза»: слева — высохший колючий шар, справа — раскрывшееся растение</figcaption>
+      </figure>
+      <canvas id="res-canvas" width="340" height="300"></canvas>
+      <div class="res-cap">Anastatica hierochuntica: высохший шар раскрывается при увлажнении</div>
+      <div id="final-result"></div>
+      <div class="row-btns">
+        <button class="btn" id="btn-cert">🎓 Получить сертификат</button>
+        <button class="btn" id="btn-retry">🔄 Пройти заново</button>
+        <button class="btn btn-ghost" id="btn-stats2">Статистика игрока</button>
+        <button class="btn btn-ghost" id="btn-rating2">Общий рейтинг</button>
+        <button class="btn btn-ghost" id="btn-home2">На главную</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ИТОГ КОНТРОЛЬНОГО УРОВНЯ -->
+  <section id="screen-control-results" class="screen">
+    <div class="card">
+      <h2>📝 Контрольный уровень завершён</h2>
+      <div id="ctrl-result"></div>
+      <div class="row-btns">
+        <button class="btn" id="btn-ctrl-retry">🔄 Пройти ещё раз</button>
+        <button class="btn btn-ghost" id="btn-stats3">Статистика игрока</button>
+        <button class="btn btn-ghost" id="btn-rating3">Общий рейтинг</button>
+        <button class="btn btn-ghost" id="btn-ctrl-home">На главную</button>
+      </div>
+    </div>
+  </section>
+
+  <footer>Систематика растений · ЕГЭ по биологии · Anastatica hierochuntica L.</footer>
+</div>
+
+<!-- МОДАЛКА: ЗАГРУЗКА РИСУНКОВ -->
+<div class="modal" id="modal-imgs">
+  <div class="modal-card">
+    <h2>🖼 Рисунки к заданиям</h2>
+    <p class="hint">Выберите файлы рисунков на вашем устройстве. Игра сожмёт их и сохранит в браузере —
+    после этого задания будут работать <b>без интернета</b>. Рис. 5 также появится на финальном экране.</p>
+    <div class="img-row"><span class="lbl"><b>Рис. 1</b> — схемы жизненных циклов (игровой уровень, вопросы 1–2)</span>
+      <input type="file" id="file-img1" accept="image/*"><button class="btn btn-small btn-ghost" id="clr-img1">✖</button>
+      <span class="st" id="st-img1"></span></div>
+    <div class="img-row"><span class="lbl"><b>Рис. 2</b> — шесть растений (игровой уровень, вопросы 3–4)</span>
+      <input type="file" id="file-img2" accept="image/*"><button class="btn btn-small btn-ghost" id="clr-img2">✖</button>
+      <span class="st" id="st-img2"></span></div>
+    <div class="img-row"><span class="lbl"><b>Рис. 3</b> — схемы жизненных циклов (контрольный уровень, вопросы 1–2)</span>
+      <input type="file" id="file-img3" accept="image/*"><button class="btn btn-small btn-ghost" id="clr-img3">✖</button>
+      <span class="st" id="st-img3"></span></div>
+    <div class="img-row"><span class="lbl"><b>Рис. 4</b> — растения (контрольный уровень, вопросы 3–4)</span>
+      <input type="file" id="file-img4" accept="image/*"><button class="btn btn-small btn-ghost" id="clr-img4">✖</button>
+      <span class="st" id="st-img4"></span></div>
+    <div class="img-row"><span class="lbl"><b>Рис. 5</b> — фото Иерихонской розы (финальный экран)</span>
+      <input type="file" id="file-img5" accept="image/*"><button class="btn btn-small btn-ghost" id="clr-img5">✖</button>
+      <span class="st" id="st-img5"></span></div>
+    <p class="hint">💡 Чтобы вшить рисунки в файл намертво, вставьте их base64‑коды в объект <b>EMBED</b>
+    в начале скрипта (инструкция там же).</p>
+    <button class="btn modal-close" id="mimgs-close">Готово</button>
+  </div>
+</div>
+
+<!-- МОДАЛКА: СТАТИСТИКА -->
+<div class="modal" id="modal-stats">
+  <div class="modal-card">
+    <h2>📊 Статистика игрока</h2>
+    <div id="stats-body"></div>
+    <button class="btn modal-close" id="mstats-close">Закрыть</button>
+  </div>
+</div>
+<!-- МОДАЛКА: РЕЙТИНГ -->
+<div class="modal" id="modal-rating">
+  <div class="modal-card">
+    <h2>🏆 Общий рейтинг (на этом устройстве)</h2>
+    <div id="rating-body"></div>
+    <button class="btn modal-close" id="mrating-close">Закрыть</button>
+  </div>
+</div>
+
+<script>
+'use strict';
+/* ================= УТИЛИТЫ ================= */
+function $(s){return document.querySelector(s);}
+function $$(s){return Array.from(document.querySelectorAll(s));}
+var LS={
+  get:function(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v);}catch(e){return d;}},
+  set:function(k,v){try{localStorage.setItem(k,JSON.stringify(v));return true;}catch(e){return false;}},
+  del:function(k){try{localStorage.removeItem(k);}catch(e){}}
+};
+function fmt(sec){sec=Math.max(0,Math.floor(sec));var m=Math.floor(sec/60),s=sec%60;return (m<10?'0':'')+m+':'+(s<10?'0':'')+s;}
+function shuffle(a){var r=a.slice();for(var i=r.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=r[i];r[i]=r[j];r[j]=t;}return r;}
+function esc(t){return t.replace(/&/g,'&amp;').replace(/</g,'&lt;');}
+
+/* ============================================================
+   ВШИВАНИЕ РИСУНКОВ В ФАЙЛ (base64)
+   1) Откройте, например, https://www.base64-image.de/
+   2) Перетащите файл рисунка и скопируйте строку, начинающуюся с "data:image/..."
+   3) Вставьте её между одинарных кавычек ниже (img1..img5).
+   Если поле пустое ('') — игра использует рисунок, загруженный через панель
+   «Рисунки к заданиям», а затем — внешнюю ссылку как запасной вариант.
+   ============================================================ */
+var EMBED={
+  img1:'', /* схемы жизненных циклов (игровой, вопр. 1–2) */
+  img2:'', /* шесть растений (игровой, вопр. 3–4)          */
+  img3:'', /* схемы жизненных циклов (контрольный, 1–2)   */
+  img4:'', /* растения (контрольный, 3–4)                 */
+  img5:''  /* фото Иерихонской розы для финала            */
+};
+var MEMIMG={}; /* рисунки, живущие только в текущей сессии */
+function imgSrc(key,url){
+  if(EMBED[key])return EMBED[key];
+  if(MEMIMG[key])return MEMIMG[key];
+  var l=LS.get('img_'+key,'');
+  if(l)return l;
+  return url||'';
+}
+
+/* ================= ЗВУК (Web Audio API) ================= */
+var AC=null;
+function ac(){
+  if(!AC){var C=window.AudioContext||window.webkitAudioContext;if(C)AC=new C();}
+  if(AC&&AC.state==='suspended')AC.resume();
+  return AC;
+}
+function tone(f,d,g,type,when){
+  var c=ac();if(!c)return;
+  g=g||0.18;type=type||'sine';when=when||0;
+  var o=c.createOscillator(),gn=c.createGain(),t=c.currentTime+when;
+  o.type=type;o.frequency.value=f;
+  o.connect(gn);gn.connect(c.destination);
+  gn.gain.setValueAtTime(0.0001,t);
+  gn.gain.exponentialRampToValueAtTime(g,t+0.012);
+  gn.gain.exponentialRampToValueAtTime(0.0001,t+d);
+  o.start(t);o.stop(t+d+0.06);
+}
+function sCorrect(){tone(600,0.15,0.2);}
+function sWrong(){tone(300,0.3,0.2);}
+function sClick(){tone(800,0.05,0.15);}
+function sWin(){var n=[523.25,659.25,783.99,1046.5];for(var i=0;i<n.length;i++)tone(n[i],0.35,0.18,'sine',i*0.18);}
+document.addEventListener('pointerdown',function(){try{ac();}catch(e){}});
+
+/* ================= ДАННЫЕ ================= */
+var LETTERS=['А','Б','В','Г','Д','Е'];
+var URL1='https://i.postimg.cc/8PB1PtsH/1111.jpg';
+var URL2='https://i.postimg.cc/2j7J1JFh/2222.jpg';
+var URL3='https://i.postimg.cc/154HyYW4/44444.jpg';
+var URL4='https://i.postimg.cc/KzyqzrK2/3333.jpg';
+
+var TAXA=[
+  {rank:'Отдел',    ru:'Покрытосеменные (Цветковые)', la:'Magnoliophyta (Angiospermae)'},
+  {rank:'Класс',    ru:'Двудольные', la:'Magnoliopsida (Dicotyledones)'},
+  {rank:'Порядок',  ru:'Капустоцветные', la:'Brassicales'},
+  {rank:'Семейство',ru:'Капустные (Крестоцветные)', la:'Brassicaceae (Cruciferae)'},
+  {rank:'Род',      ru:'Анастатика', la:'Anastatica'},
+  {rank:'Вид',      ru:'Анастатика иерихонская (Иерихонская роза)', la:'Anastatica hierochuntica L.'}
+];
+
+var LEVELS={
+ training:{questions:[
+  {type:'single',img:'img1',url:URL1,text:'Какой цифрой на схемах различных типов жизненных циклов обозначен многоклеточный диплоидный спорофит?',correct:9},
+  {type:'match',img:'img1',url:URL1,optCount:2,text:'Установите соответствие между характеристиками и типами жизненных циклов, обозначенными на схеме цифрами 1, 2.',
+   items:['представлен жизненный цикл хламидомонады','гаплоидными являются только половые клетки','гаметы образуются мейозом','только зигота является диплоидной стадией','характерен для большинства многоклеточных животных','мейозу подвергается зигота'],
+   correct:[1,2,2,1,2,1]},
+  {type:'single',img:'img2',url:URL2,text:'На рисунке под каким номером изображено растение, образующее плоды?',correct:6},
+  {type:'match',img:'img2',url:URL2,optCount:3,text:'Установите соответствие между характеристиками и растениями, изображенными на рисунках 1, 2, 3.',
+   items:['наличие молодых листьев, закрученных в виде улитки','расположение спорангиев на вайях','отсутствие ксилемы и флоэмы','преобладание гаметофита в жизненном цикле','наличие весенних и летних специализированных побегов','формирование спорогона — коробочки со спорами'],
+   correct:[2,2,1,1,3,1]},
+  {type:'multi',img:null,url:null,text:'Выберите три верных ответа. Голосеменные растения в отличие от папоротниковидных:',
+   options:['образуют семязачатки','не нуждаются в наличии воды при оплодотворении','являются автотрофными организмами','взаимодействуют с окружающей средой','размножаются спорами','в основном имеют форму деревьев и кустарников'],
+   correct:[1,2,6]},
+  {type:'sequence',img:null,url:null,text:'Установите последовательность систематических групп организмов, начиная с самого высокого ранга. Выберите порядковый номер (1 — самый высокий ранг, 6 — самый низкий) для каждого таксона.',
+   order:['Растения','Покрытосеменные','Двудольные','Виноградовые','Циссус','Циссус Байнеза']}
+ ]},
+ control:{questions:[
+  {type:'single',img:'img3',url:URL3,text:'Под каким номером изображена схема, отражающая жизненный цикл, в котором зигота делится мейозом?',correct:4},
+  {type:'match',img:'img3',url:URL3,optCount:3,text:'Установите соответствие между характеристиками и стадиями жизненного цикла, обозначенными на схеме цифрами 1, 2, 3.',
+   items:['является многоклеточным организмом','при делении митозом формирует взрослый организм','образуется при слиянии гамет','единственная гаплоидная стадия в цикле','как правило, мужская подвижная, а женская нет','содержит специализированные, продуцирующие гаметы клетки'],
+   correct:[1,3,3,2,2,1]},
+  {type:'single',img:'img4',url:URL4,text:'На рисунке под каким номером изображено растение, имеющее весенние и летние побеги?',correct:4},
+  {type:'match',img:'img4',url:URL4,optCount:3,text:'Установите соответствие между характеристиками и организмами, изображенными на рисунках 1, 2, 3.',
+   items:['образование околоплодника','наличие бурого пигмента фукоксантина','наличие мужских и женских шишек','наличие зародышевого мешка','наличие ризоидов','попадание пыльцы на семенные чешуи'],
+   correct:[3,1,2,3,1,2]},
+  {type:'multi',img:null,url:null,text:'Выберите три верных ответа. Папоротники в отличие от мхов:',
+   options:['характеризуются доминирующим в жизненном цикле спорофитом','не нуждаются в наличии воды при оплодотворении','способны к фотосинтезу на свету','имеют корни','имеют корневища','относятся к автотрофным организмам'],
+   correct:[1,4,5]},
+  {type:'sequence',img:null,url:null,text:'Установите последовательность систематических групп организмов, начиная с самого низкого ранга. Выберите порядковый номер (1 — самый низкий ранг, 6 — самый высокий) для каждого таксона.',
+   order:['Гледичия японская','Гледичия','Бобовые','Двудольные','Покрытосеменные','Растения']}
+ ]}
+};
+
+/* ================= СОСТОЯНИЕ ================= */
+var S={mode:null,q:0,correct:0,answered:false,card:[false,false,false,false,false,false],
+       timerOn:false,t0:0,elapsed:0,int:null,selN:null,seqShown:[]};
+function curQ(){return LEVELS[S.mode].questions[S.q];}
+function getName(){
+  var n=($('#name-input').value||'').trim();
+  if(!n)n=LS.get('playerName','')||'';
+  if(!n)n='Юный ботаник';
+  return n;
+}
+function show(id){
+  $$('.screen').forEach(function(s){s.classList.remove('active');});
+  $(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function tick(){
+  S.elapsed=(Date.now()-S.t0)/1000;
+  var a=$('#q-timer'),b=$('#story-timer');
+  if(a)a.textContent=fmt(S.elapsed);
+  if(b)b.textContent=fmt(S.elapsed);
+}
+function startTimer(){if(S.timerOn)return;S.timerOn=true;S.t0=Date.now()-S.elapsed*1000;S.int=setInterval(tick,250);tick();}
+function stopTimer(){if(S.int){clearInterval(S.int);S.int=null;}}
+function resetTimerState(){stopTimer();S.timerOn=false;S.elapsed=0;var a=$('#q-timer');if(a)a.textContent='00:00';var b=$('#story-timer');if(b)b.textContent='00:00';}
+
+/* ================= СТАРТОВЫЙ ЭКРАН ================= */
+function updateStartButtons(){
+  var done=LS.get('trainingCompleted',false);
+  var bc=$('#btn-control');
+  if(done){bc.classList.remove('locked');$('#ctrl-note').textContent='доступен — удачи!';}
+  else{bc.classList.add('locked');$('#ctrl-note').textContent='откроется после прохождения игрового уровня';}
+}
+function openStory(){
+  resetTimerState();
+  renderCardInto($('#story-card'),[false,false,false,false,false,false]);
+  show('#screen-story');
+}
+function begin(mode){
+  S.mode=mode;S.q=0;S.correct=0;S.answered=false;
+  S.card=[false,false,false,false,false,false];
+  resetTimerState();
+  LS.set('playerName',getName());
+  show('#screen-question');
+  renderQuestion(0);
+}
+
+/* ================= КАРТОЧКА ================= */
+function renderCardInto(el,filled){
+  var html='';
+  for(var i=0;i<TAXA.length;i++){
+    var t=TAXA[i],f=filled[i];
+    html+='<div class="taxon-row'+(f?' filled':'')+'"><span class="taxon-rank">'+t.rank+':</span>'+
+      (f?'<span class="taxon-val">'+esc(t.ru)+' <i>'+esc(t.la)+'</i></span>'
+        :'<span class="taxon-val empty">— ? —</span>')+'</div>';
+  }
+  el.innerHTML=html;
+}
+
+/* ================= РЕНДЕР ВОПРОСА ================= */
+function warn(msg){var w=$('#warn');w.textContent='⚠️ '+msg;w.classList.remove('hidden');}
+function hideWarn(){$('#warn').classList.add('hidden');}
+
+function renderQuestion(i){
+  S.q=i;S.answered=false;S.selN=null;
+  var q=curQ();
+  $('#q-num').textContent='Вопрос '+(i+1)+' из 6';
+  $('#q-tax').textContent=(S.mode==='training')?('Таксон: '+TAXA[i].rank):'Контрольный уровень';
+  $('#q-text').textContent=q.text;
+  hideWarn();
+  var fb=$('#feedback');fb.className='feedback hidden';fb.innerHTML='';
+  var chk=$('#btn-check');chk.disabled=false;
+  if(S.mode==='control'){chk.classList.remove('hidden');chk.textContent='Отправить';}
+  else if(q.type==='single'){chk.classList.add('hidden');}
+  else{chk.classList.remove('hidden');chk.textContent='Проверить';}
+  if(S.mode==='training'){$('#idcard-wrap').classList.remove('hidden');renderCardInto($('#idcard'),S.card);}
+  else{$('#idcard-wrap').classList.add('hidden');}
+  /* изображение: base64 -> локальное хранилище -> внешняя ссылка */
+  var wrap=$('#img-wrap');wrap.innerHTML='';
+  var src=q.img?imgSrc(q.img,q.url):(q.url||'');
+  if(src){
+    wrap.classList.remove('hidden');
+    wrap.innerHTML='<div class="spinner"></div><img alt="Рисунок к заданию" style="display:none"><button class="btn btn-small hidden" id="btn-skip-img">Продолжить без изображения</button>';
+    var img=wrap.querySelector('img'),skip=wrap.querySelector('#btn-skip-img'),sp=wrap.querySelector('.spinner');
+    var ready=function(){if(!S.timerOn)startTimer();};
+    var skipFn=function(){skip.classList.add('hidden');if(sp&&sp.parentNode)sp.parentNode.removeChild(sp);img.style.display='none';ready();};
+    img.onload=function(){img.style.display='block';if(sp&&sp.parentNode)sp.parentNode.removeChild(sp);skip.classList.add('hidden');ready();};
+    img.onerror=function(){if(sp&&sp.parentNode)sp.parentNode.removeChild(sp);skip.classList.remove('hidden');};
+    setTimeout(function(){if(!img.complete||img.naturalWidth===0){skip.classList.remove('hidden');}},12000);
+    skip.onclick=skipFn;
+    img.src=src;
+  }else{
+    wrap.classList.add('hidden');
+    if(!S.timerOn)startTimer();
+  }
+  buildControls(q);
+}
+
+function buildControls(q){
+  var c=$('#controls');c.innerHTML='';
+  if(q.type==='single'){
+    var d=document.createElement('div');d.className='opts';
+    for(var n=1;n<=10;n++){
+      (function(n){
+        var b=document.createElement('button');b.className='opt';b.textContent=n;
+        b.onclick=function(){
+          if(S.answered)return;
+          if(S.mode==='training'){markSingle(n,q);evaluate(n===q.correct,revealSingle(q));}
+          else{S.selN=n;$$('#controls .opt').forEach(function(x){x.classList.remove('sel');});b.classList.add('sel');}
+        };
+        d.appendChild(b);
+      })(n);
+    }
+    c.appendChild(d);
+  }
+  else if(q.type==='match'){
+    var box=document.createElement('div');
+    for(var i=0;i<6;i++){
+      var row=document.createElement('div');row.className='m-row';
+      var L=document.createElement('span');L.className='m-letter';L.textContent=LETTERS[i]+')';
+      var tx=document.createElement('span');tx.className='m-text';tx.textContent=q.items[i];
+      var sel=document.createElement('select');
+      sel.innerHTML='<option value="">—</option>';
+      for(var k=1;k<=q.optCount;k++)sel.innerHTML+='<option value="'+k+'">'+k+'</option>';
+      row.appendChild(L);row.appendChild(tx);row.appendChild(sel);
+      box.appendChild(row);
+    }
+    c.appendChild(box);
+  }
+  else if(q.type==='multi'){
+    var m=document.createElement('div');m.className='multi';
+    for(var j=0;j<q.options.length;j++){
+      var lab=document.createElement('label');
+      lab.innerHTML='<input type="checkbox" value="'+(j+1)+'"> <span>'+(j+1)+'. '+esc(q.options[j])+'</span>';
+      m.appendChild(lab);
+    }
+    c.appendChild(m);
+  }
+  else if(q.type==='sequence'){
+    var shown=shuffle(q.order.slice());
+    var guard=0;
+    while(shown.join('|')===q.order.join('|')&&guard<5){shown=shuffle(q.order.slice());guard++;}
+    S.seqShown=shown;
+    var sb=document.createElement('div');
+    for(var s=0;s<shown.length;s++){
+      var r2=document.createElement('div');r2.className='m-row seq-row';
+      var nm=document.createElement('span');nm.className='m-text';nm.style.gridColumn='2';nm.textContent=shown[s];
+      var s2=document.createElement('select');
+      s2.innerHTML='<option value="">—</option>';
+      for(var v=1;v<=6;v++)s2.innerHTML+='<option value="'+v+'">'+v+'</option>';
+      r2.appendChild(nm);r2.appendChild(s2);
+      sb.appendChild(r2);
+    }
+    c.appendChild(sb);
+  }
+}
+
+/* ================= ПРОВЕРКА ================= */
+function markSingle(chosen,q){
+  $$('#controls .opt').forEach(function(b){
+    b.disabled=true;
+    var n=+b.textContent;
+    if(n===q.correct)b.classList.add('good');
+    else if(n===chosen)b.classList.add('bad');
+  });
+}
+function revealSingle(q){return 'Правильный ответ: '+q.correct+'.';}
+function revealMatch(q){return 'Правильный ответ: '+LETTERS.map(function(L,i){return L+'-'+q.correct[i];}).join(', ')+'.';}
+function revealMulti(q){return 'Правильные ответы: '+q.correct.join(', ')+'.';}
+function revealSeq(q){return 'Правильный порядок: '+q.order.map(function(t,i){return (i+1)+') '+t;}).join(' → ')+'.';}
+
+$('#btn-check').onclick=function(){
+  if(S.answered)return;
+  var q=curQ();
+  if(q.type==='single'){
+    if(S.selN==null){warn('Выберите один вариант ответа!');return;}
+    markSingle(S.selN,q);
+    evaluate(S.selN===q.correct,revealSingle(q));
+  }
+  else if(q.type==='match'){
+    var sels=$$('#controls select');
+    var bad=false;
+    for(var i=0;i<sels.length;i++)if(!sels[i].value){bad=true;break;}
+    if(bad){warn('Выберите вариант для каждой характеристики (А–Е).');return;}
+    var ok=true;
+    sels.forEach(function(s,idx){
+      var v=+s.value,good=v===q.correct[idx];
+      s.disabled=true;s.classList.add(good?'good':'bad');
+      s.parentNode.classList.add(good?'good':'bad');
+      if(!good)ok=false;
+    });
+    evaluate(ok,revealMatch(q));
+  }
+  else if(q.type==='multi'){
+    var chs=$$('#controls input:checked');
+    if(chs.length!==3){warn('Нужно выбрать ровно три варианта!');return;}
+    var sel=chs.map(function(c){return +c.value;});
+    var okM=q.correct.every(function(cc){return sel.indexOf(cc)>=0;});
+    $$('#controls label').forEach(function(lab){
+      var inp=lab.querySelector('input');inp.disabled=true;
+      var v=+inp.value,inC=sel.indexOf(v)>=0,inK=q.correct.indexOf(v)>=0;
+      if(inC&&inK)lab.classList.add('good');
+      else if(inC&&!inK)lab.classList.add('bad');
+      else if(!inC&&inK)lab.classList.add('miss');
+    });
+    evaluate(okM,revealMulti(q));
+  }
+  else if(q.type==='sequence'){
+    var ss=$$('#controls select');
+    var vals=ss.map(function(s){return +s.value;});
+    var sorted=vals.slice().sort(function(a,b){return a-b;});
+    var perm=true;
+    for(var p=0;p<6;p++)if(sorted[p]!==p+1){perm=false;break;}
+    if(!perm){warn('Все номера от 1 до 6 должны быть использованы ровно по одному разу!');return;}
+    var okS=true;
+    ss.forEach(function(s,idx){
+      var need=curQ().order.indexOf(S.seqShown[idx])+1;
+      var good=(+s.value)===need;
+      s.disabled=true;s.classList.add(good?'good':'bad');
+      s.parentNode.classList.add(good?'good':'bad');
+      if(!good)okS=false;
+    });
+    evaluate(okS,revealSeq(curQ()));
+  }
+};
+
+function evaluate(ok,reveal){
+  S.answered=true;
+  $$('#controls button.opt').forEach(function(b){b.disabled=true;});
+  $$('#controls select').forEach(function(s){s.disabled=true;});
+  $$('#controls input').forEach(function(i){i.disabled=true;});
+  $('#btn-check').classList.add('hidden');
+  hideWarn();
+  var fb=$('#feedback');
+  fb.classList.remove('hidden');
+  fb.className='feedback '+(ok?'ok':'bad');
+  var txt=ok
+    ? (S.mode==='training'?'✅ <b>Верно!</b> Таксон занесён в определительную карточку.':'✅ <b>Верно!</b>')
+    : '❌ <b>Неверно.</b>';
+  var html='<div>'+txt+'</div>';
+  if(!ok)html+='<button class="btn btn-small" id="btn-reveal">Показать правильный ответ</button><div class="reveal hidden" id="reveal"></div>';
+  html+='<button class="btn" id="btn-next">Далее →</button>';
+  fb.innerHTML=html;
+  if(ok){
+    sCorrect();
+    S.correct++;
+    if(S.mode==='training'){
+      S.card[S.q]=true;
+      renderCardInto($('#idcard'),S.card);
+      setTimeout(sClick,180);
+      var page=$('#q-page');page.classList.add('flash');
+      setTimeout(function(){page.classList.remove('flash');},850);
+    }
+  }else{sWrong();}
+  if(!ok){
+    $('#btn-reveal').onclick=function(){
+      var r=$('#reveal');r.textContent=reveal;r.classList.toggle('hidden');
+    };
+  }
+  $('#btn-next').onclick=goNext;
+}
+
+function goNext(){
+  var page=$('#q-page');
+  page.classList.add('flip-out');
+  setTimeout(function(){
+    if(S.q<5){
+      renderQuestion(S.q+1);
+      page.classList.remove('flip-out');
+      page.classList.add('flip-in');
+      setTimeout(function(){page.classList.remove('flip-in');},420);
+      window.scrollTo(0,0);
+    }else{
+      page.classList.remove('flip-out');
+      finishLevel();
+    }
+  },390);
+}
+
+/* ================= ФИНАЛ ================= */
+function pushStat(name,mode,time,correct,total){
+  var all=LS.get('playerStats',[]);
+  all.push({name:name,mode:mode,time:time,correct:correct,total:total,date:new Date().toISOString()});
+  LS.set('playerStats',all);
+}
+function finishLevel(){
+  stopTimer();
+  var secs=Math.round(S.elapsed);
+  pushStat(getName(),S.mode,secs,S.correct,6);
+  if(S.mode==='training'){
+    LS.set('trainingCompleted',true);
+    showFinal(secs);
+  }else{
+    LS.set('controlResult',{correct:S.correct,time:secs,date:new Date().toISOString()});
+    showControlResults(secs);
+  }
+  updateStartButtons();
+}
+function showFinal(secs){
+  var perfect=(S.correct===6);
+  var res=$('#final-result');
+  if(perfect){
+    res.innerHTML='<h3>🎉 Поздравляем, '+esc(getName())+'!</h3>'+
+      '<p>Все 6 таксонов определены без единой ошибки! Легенда Иерихона открыта полностью.<br>Время прохождения: <b>'+fmt(secs)+'</b></p>';
+  }else{
+    res.innerHTML='<h3>Квест завершён</h3>'+
+      '<p>Заполнено таксонов в карточке: <b>'+S.correct+' из 6</b>. Время: <b>'+fmt(secs)+'</b>.<br>'+
+      'Легенда открывается каждому, кто дошёл до конца, но сертификат выдаётся только за идеальное прохождение. Попробуйте ещё раз!</p>';
+  }
+  var cert=$('#btn-cert');
+  if(perfect){cert.disabled=false;cert.textContent='🎓 Получить сертификат';}
+  else{cert.disabled=true;cert.textContent='🔒 Сертификат недоступен';}
+  /* рис. 5 — фото Иерихонской розы */
+  var psrc=imgSrc('img5','');
+  var fig=$('#final-fig');
+  if(psrc){$('#final-photo').src=psrc;fig.classList.remove('hidden');}
+  else{fig.classList.add('hidden');}
+  show('#screen-final');
+  startResurrection();
+  if(perfect){sWin();startFireworks(5000);}
+}
+function showControlResults(secs){
+  $('#ctrl-result').innerHTML='<p>Правильных ответов: <b>'+S.correct+' из 6</b></p>'+
+    '<p>Время: <b>'+fmt(secs)+'</b></p>'+
+    (S.correct===6?'<p>🌟 Отлично! Вы мастер систематики!</p>':(S.correct>=4?'<p>Хороший результат! Ещё немного практики — и будет идеально.</p>':'<p>Стоит повторить тренировочный уровень.</p>'));
+  show('#screen-control-results');
+}
+
+/* ================= АНИМАЦИЯ ВОСКРЕШЕНИЯ ================= */
+var resRAF=null;
+function lerp(a,b,t){return a+(b-a)*t;}
+function colLerp(c1,c2,t){
+  return 'rgb('+Math.round(lerp(c1[0],c2[0],t))+','+Math.round(lerp(c1[1],c2[1],t))+','+Math.round(lerp(c1[2],c2[2],t))+')';
+}
+function startResurrection(){
+  var cv=$('#res-canvas'),ctx=cv.getContext('2d');
+  if(resRAF)cancelAnimationFrame(resRAF);
+  var t0=performance.now(),DUR=9000;
+  var branches=[];
+  for(var i=0;i<14;i++){
+    branches.push({a:-Math.PI/2+(i-6.5)*0.30,len:78+(i%3)*20,curl:(i%2?1:-1),w:2.4+(i%3)*0.8,ph:i*0.7});
+  }
+  function draw(p,now){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    ctx.save();
+    ctx.globalAlpha=0.25+0.5*p;
+    ctx.fillStyle='#7fb8d8';
+    ctx.beginPath();ctx.ellipse(170,268,120+20*p,16+6*p,0,0,Math.PI*2);ctx.fill();
+    ctx.restore();
+    var r=26-8*p;
+    ctx.fillStyle=colLerp([122,74,31],[96,110,50],p);
+    ctx.beginPath();ctx.arc(170,238,r,0,Math.PI*2);ctx.fill();
+    ctx.strokeStyle='rgba(60,35,10,.6)';ctx.lineWidth=1.5;ctx.stroke();
+    for(var i=0;i<branches.length;i++){
+      var b=branches[i];
+      var sway=p>=1?Math.sin(now/700+b.ph)*0.04:0;
+      var k=(1-p)*7*b.curl;
+      var len=b.len*(0.4+0.6*p);
+      var steps=Math.max(6,Math.floor(len/4));
+      var x=170,y=238,heading=b.a+sway;
+      var col=colLerp([122,74,31],[47,125,50],p);
+      ctx.strokeStyle=col;ctx.lineCap='round';
+      var px=x,py=y;
+      for(var sIdx=0;sIdx<steps;sIdx++){
+        var t=sIdx/steps;
+        heading+=k*0.11*(1-t*0.35);
+        x+=Math.cos(heading)*4;y+=Math.sin(heading)*4;
+        ctx.lineWidth=Math.max(1,b.w*(1-t*0.6));
+        ctx.beginPath();ctx.moveTo(px,py);ctx.lineTo(x,y);ctx.stroke();
+        px=x;py=y;
+        if(p>0.55&&sIdx%4===2){
+          ctx.save();
+          ctx.globalAlpha=Math.min(1,(p-0.55)/0.45);
+          ctx.fillStyle='#58b368';
+          ctx.translate(x,y);ctx.rotate(heading+0.9);
+          ctx.beginPath();ctx.ellipse(0,0,5,2.4,0,0,Math.PI*2);ctx.fill();
+          ctx.restore();
+        }
+      }
+      if(p>0.85){
+        ctx.save();
+        ctx.globalAlpha=Math.min(1,(p-0.85)/0.15);
+        ctx.fillStyle='#ffffff';
+        ctx.beginPath();ctx.arc(x,y,2.6,0,Math.PI*2);ctx.fill();
+        ctx.fillStyle='#f7d94c';
+        ctx.beginPath();ctx.arc(x,y,1.1,0,Math.PI*2);ctx.fill();
+        ctx.restore();
+      }
+    }
+  }
+  function frame(now){
+    var p=Math.min(1,(now-t0)/DUR);
+    draw(p,now);
+    resRAF=requestAnimationFrame(frame);
+  }
+  resRAF=requestAnimationFrame(frame);
+}
+
+/* ================= ФЕЙЕРВЕРК ================= */
+var fwParts=[],fwRun=false;
+function startFireworks(dur){
+  var fx=$('#fx'),ctx=fx.getContext('2d');
+  fx.width=window.innerWidth;fx.height=window.innerHeight;
+  var end=Date.now()+dur,lastBurst=0;
+  function burst(){
+    var x=60+Math.random()*(fx.width-120),y=50+Math.random()*fx.height*0.45;
+    var hue=Math.floor(Math.random()*360);
+    for(var i=0;i<70;i++){
+      var a=Math.random()*Math.PI*2,v=1.5+Math.random()*4.5;
+      fwParts.push({x:x,y:y,vx:Math.cos(a)*v,vy:Math.sin(a)*v,life:1,hue:hue+Math.floor(Math.random()*40)});
+    }
+  }
+  if(!fwRun){
+    fwRun=true;
+    (function loop(){
+      ctx.clearRect(0,0,fx.width,fx.height);
+      var now=Date.now();
+      if(now<end&&now-lastBurst>450){burst();lastBurst=now;}
+      fwParts=fwParts.filter(function(p){return p.life>0;});
+      for(var i=0;i<fwParts.length;i++){
+        var p=fwParts[i];
+        p.x+=p.vx;p.y+=p.vy;p.vy+=0.05;p.life-=0.012;
+        ctx.fillStyle='hsla('+p.hue+',100%,60%,'+Math.max(0,p.life)+')';
+        ctx.beginPath();ctx.arc(p.x,p.y,2.4,0,Math.PI*2);ctx.fill();
+      }
+      if(now<end+2500||fwParts.length>0){requestAnimationFrame(loop);}
+      else{fwRun=false;ctx.clearRect(0,0,fx.width,fx.height);}
+    })();
+  }
+}
+
+/* ================= СЕРТИФИКАТ ================= */
+function wrapText(ctx,text,x,y,maxW,lh){
+  var words=text.split(' '),line='';
+  for(var i=0;i<words.length;i++){
+    var t=line+words[i]+' ';
+    if(ctx.measureText(t).width>maxW&&line){ctx.fillText(line.replace(/\s+$/,''),x,y);y+=lh;line=words[i]+' ';}
+    else line=t;
+  }
+  ctx.fillText(line.replace(/\s+$/,''),x,y);
+  return y+lh;
+}
+function makeCertificate(){
+  var name=getName();
+  var W=1240,H=1754;
+  var cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  var ctx=cv.getContext('2d');
+  ctx.fillStyle='#f6ecd4';ctx.fillRect(0,0,W,H);
+  var g=ctx.createRadialGradient(W/2,H/2,300,W/2,H/2,1000);
+  g.addColorStop(0,'rgba(120,80,30,0)');g.addColorStop(1,'rgba(120,80,30,.28)');
+  ctx.fillStyle=g;ctx.fillRect(0,0,W,H);
+  ctx.strokeStyle='#7a5a26';ctx.lineWidth=8;ctx.strokeRect(40,40,W-80,H-80);
+  ctx.lineWidth=2;ctx.strokeRect(62,62,W-124,H-124);
+  ctx.fillStyle='#7a5a26';
+  [[40,40],[W-40,40],[40,H-40],[W-40,H-40]].forEach(function(c){
+    ctx.beginPath();ctx.arc(c[0],c[1],14,0,Math.PI*2);ctx.fill();
+  });
+  ctx.textAlign='center';
+  ctx.fillStyle='#4a3416';
+  ctx.font='bold 74px Georgia, serif';ctx.fillText('CERTIFICATUM BOTANICUM',W/2,180);
+  ctx.font='italic 30px Georgia, serif';ctx.fillText('Систематика: воскресший гербарий (тайна Иерихона)',W/2,238);
+  ctx.font='28px Georgia, serif';ctx.fillText('Настоящим удостоверяется, что',W/2,320);
+  ctx.font='italic bold 56px Georgia, serif';ctx.fillStyle='#14532d';ctx.fillText(name,W/2,392);
+  ctx.fillStyle='#4a3416';ctx.font='28px Georgia, serif';
+  ctx.fillText('успешно восстановил(а) систематическое положение растения',W/2,452);
+  ctx.font='bold 42px Georgia, serif';ctx.fillText('Анастатика иерихонская (Иерихонская роза)',W/2,514);
+  ctx.font='italic 32px Georgia, serif';ctx.fillText('Anastatica hierochuntica L.',W/2,562);
+  var ty=620,rh=62;
+  ctx.font='bold 26px Georgia, serif';
+  ctx.textAlign='left';
+  ctx.fillText('Таксон',110,ty);ctx.fillText('Русское название',400,ty);ctx.fillText('Латинское название',790,ty);
+  ctx.strokeStyle='#7a5a26';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(100,ty+14);ctx.lineTo(W-100,ty+14);ctx.stroke();
+  for(var i=0;i<TAXA.length;i++){
+    var y=ty+14+rh*(i+1)-18;
+    ctx.font='bold 25px Georgia, serif';ctx.fillText(TAXA[i].rank,110,y);
+    ctx.font='25px Georgia, serif';ctx.fillText(TAXA[i].ru,400,y);
+    ctx.font='italic 25px Georgia, serif';ctx.fillText(TAXA[i].la,790,y);
+    ctx.strokeStyle='rgba(122,90,38,.5)';ctx.lineWidth=1;
+    ctx.beginPath();ctx.moveTo(100,y+16);ctx.lineTo(W-100,y+16);ctx.stroke();
+  }
+  var by=ty+14+rh*6+56;
+  ctx.fillStyle='#4a3416';ctx.font='bold 27px Georgia, serif';ctx.textAlign='left';
+  ctx.fillText('Ботаническая справка:',110,by);
+  ctx.font='25px Georgia, serif';
+  by=wrapText(ctx,'Синонимы: Иерихонская роза, воскресное растение, rosa hierochuntina.',110,by+40,W-220,34);
+  by=wrapText(ctx,'Ареал: пустыни и полупустыни Северной Африки, Аравийского полуострова и Ближнего Востока (окрестности Иерихона).',110,by+6,W-220,34);
+  by=wrapText(ctx,'Особенность: «воскресающее» растение — при высыхании сворачивается в шар, а при увлажнении ветви раскрываются и растение оживает.',110,by+6,W-220,34);
+  ctx.textAlign='center';ctx.fillStyle='#7a1f1f';
+  ctx.font='italic bold 46px Georgia, serif';
+  ctx.fillText('«Ex siccitate vita»',W/2,H-330);
+  ctx.strokeStyle='#4a3416';ctx.lineWidth=2;
+  ctx.beginPath();ctx.moveTo(140,H-220);ctx.lineTo(520,H-220);ctx.stroke();
+  ctx.beginPath();ctx.moveTo(W-520,H-220);ctx.lineTo(W-140,H-220);ctx.stroke();
+  ctx.fillStyle='#4a3416';ctx.font='26px Georgia, serif';
+  ctx.fillText('Профессор ботаники',330,H-190);
+  ctx.fillText('Хранитель гербария',W-330,H-190);
+  var d=new Date().toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  ctx.font='italic 26px Georgia, serif';
+  ctx.fillText('Дата: '+d+' г.',W/2,H-110);
+  var a=document.createElement('a');
+  a.download='Certificatum_Botanicum_'+name.replace(/\s+/g,'_')+'.png';
+  a.href=cv.toDataURL('image/png');
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+}
+
+/* ================= ЗАГРУЗКА РИСУНКОВ ================= */
+function refreshImgStatus(key){
+  var st=$('#st-img'+key);
+  var has=!!(EMBED[key]||MEMIMG[key]||LS.get('img_'+key,''));
+  st.textContent=has?'✔ рисунок загружен':'не загружен';
+}
+function handleFile(key,file){
+  var st=$('#st-img'+key);
+  st.textContent='обработка…';
+  var reader=new FileReader();
+  reader.onload=function(){
+    var img=new Image();
+    img.onload=function(){
+      var max=1200,w=img.naturalWidth,h=img.naturalHeight;
+      var k=Math.min(1,max/Math.max(w,h));
+      var cw=Math.max(1,Math.round(w*k)),ch=Math.max(1,Math.round(h*k));
+      var cv=document.createElement('canvas');cv.width=cw;cv.height=ch;
+      var cx=cv.getContext('2d');
+      cx.fillStyle='#ffffff';cx.fillRect(0,0,cw,ch); /* белый фон для прозрачных PNG */
+      cx.drawImage(img,0,0,cw,ch);
+      var url=cv.toDataURL('image/jpeg',0.85);
+      MEMIMG[key]=url;
+      var ok=LS.set('img_'+key,url);
+      st.textContent=ok?'✔ сохранено в браузере (работает без интернета)':'✔ будет использоваться в этой сессии (файл крупный)';
+    };
+    img.onerror=function(){st.textContent='⚠️ не удалось прочитать файл';};
+    img.src=reader.result;
+  };
+  reader.onerror=function(){st.textContent='⚠️ ошибка чтения файла';};
+  reader.readAsDataURL(file);
+}
+function openImgsModal(){
+  ['1','2','3','4','5'].forEach(function(k){refreshImgStatus(k);});
+  $('#modal-imgs').classList.add('open');
+}
+['1','2','3','4','5'].forEach(function(k){
+  $('#file-img'+k).addEventListener('change',function(){
+    if(this.files&&this.files[0])handleFile(k,this.files[0]);
+  });
+  $('#clr-img'+k).onclick=function(){
+    MEMIMG['img'+k]='';
+    LS.del('img_'+k);
+    refreshImgStatus(k);
+  };
+});
+
+/* ================= СТАТИСТИКА И РЕЙТИНГ ================= */
+function openStats(){
+  var name=getName();
+  var all=LS.get('playerStats',[]).filter(function(r){return r.name===name;});
+  var b=$('#stats-body');
+  if(!all.length){b.innerHTML='<p>Попыток пока нет. Сыграйте первый квест!</p>';}
+  else{
+    var html='<table class="stat"><tr><th>Дата</th><th>Режим</th><th>Время</th><th>Результат</th></tr>';
+    all.slice().reverse().forEach(function(r){
+      html+='<tr><td>'+new Date(r.date).toLocaleString('ru-RU',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'})+
+        '</td><td>'+(r.mode==='training'?'Игровой':'Контрольный')+'</td><td>'+fmt(r.time)+'</td><td>'+r.correct+' из '+r.total+'</td></tr>';
+    });
+    html+='</table>';
+    b.innerHTML=html;
+  }
+  $('#modal-stats').classList.add('open');
+}
+function openRating(){
+  var all=LS.get('playerStats',[]);
+  var m={};
+  all.forEach(function(r){
+    var e=m[r.name]||(m[r.name]={name:r.name,att:0,cor:0,q:0});
+    e.att++;e.cor+=r.correct;e.q+=r.total;
+  });
+  var rows=Object.keys(m).map(function(k){var e=m[k];e.pct=e.q?Math.round(100*e.cor/e.q):0;return e;})
+    .sort(function(a,b){return b.pct-a.pct||b.cor-a.cor;});
+  var b=$('#rating-body');
+  if(!rows.length){b.innerHTML='<p>Рейтинг пуст — станьте первым!</p>';}
+  else{
+    var medal=['🥇','','🥉'];
+    var html='<table class="stat"><tr><th>Место</th><th>Имя</th><th>Попыток</th><th>Правильных</th><th>%</th></tr>';
+    rows.forEach(function(e,i){
+      html+='<tr><td>'+(medal[i]||(i+1))+'</td><td>'+esc(e.name)+'</td><td>'+e.att+'</td><td>'+e.cor+'</td><td>'+e.pct+'%</td></tr>';
+    });
+    html+='</table>';
+    b.innerHTML=html;
+  }
+  $('#modal-rating').classList.add('open');
+}
+
+/* ================= ПРИВЯЗКИ КНОПОК ================= */
+$('#name-input').value=LS.get('playerName','');
+$('#name-input').addEventListener('input',function(){LS.set('playerName',this.value.trim());});
+$('#btn-training').onclick=function(){LS.set('playerName',getName());openStory();};
+$('#btn-control').onclick=function(){
+  if(!LS.get('trainingCompleted',false)){alert('Контрольный уровень откроется после прохождения игрового уровня!');return;}
+  LS.set('playerName',getName());begin('control');
+};
+$('#btn-stats').onclick=openStats;
+$('#btn-rating').onclick=openRating;
+$('#btn-imgs').onclick=openImgsModal;
+$('#btn-start').onclick=function(){begin('training');};
+$('#btn-story-home').onclick=function(){show('#screen-start');updateStartButtons();};
+$('#btn-cert').onclick=function(){if(!$('#btn-cert').disabled)makeCertificate();};
+$('#btn-retry').onclick=openStory;
+$('#btn-home2').onclick=function(){show('#screen-start');updateStartButtons();};
+$('#btn-stats2').onclick=openStats;$('#btn-rating2').onclick=openRating;
+$('#btn-ctrl-retry').onclick=function(){begin('control');};
+$('#btn-ctrl-home').onclick=function(){show('#screen-start');updateStartButtons();};
+$('#btn-stats3').onclick=openStats;$('#btn-rating3').onclick=openRating;
+$('#mstats-close').onclick=function(){$('#modal-stats').classList.remove('open');};
+$('#mrating-close').onclick=function(){$('#modal-rating').classList.remove('open');};
+$('#mimgs-close').onclick=function(){$('#modal-imgs').classList.remove('open');};
+window.addEventListener('resize',function(){var fx=$('#fx');fx.width=window.innerWidth;fx.height=window.innerHeight;});
+updateStartButtons();
+</script>
+</body>
+</html>
